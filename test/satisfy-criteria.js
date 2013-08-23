@@ -7,13 +7,13 @@ var test_ =  !debug ? function () {} : require('tap').test
 
 var satisfy = require('../satisfy-criteria')
 
-function ok (t, criteria, given, cached, cachedWins) {
+function ok (t, criteria, given, cached, cachedIsLatest) {
   var info = satisfy(criteria, given, cached)
   t.ok(info.satisfied, '"' + given + '" and "' + cached + '" satisfy ' + criteria);
-  t.equal(info.cachedWins, cachedWins, (cachedWins ? 'cached' : 'given') + ' wins')
+  t.equal(info.cachedIsLatest, cachedIsLatest, (cachedIsLatest ? 'cached' : 'given') + ' wins')
 }
 
-function notok (t, criteria, given, cached, cachedWins) {
+function notok (t, criteria, given, cached, cachedIsLatest) {
   var info = satisfy(criteria, given, cached)
   t.notOk(info.satisfied, '"' + given + '" and "' + cached + '" do not satisfy ' + criteria);
 }

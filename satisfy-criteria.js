@@ -15,24 +15,24 @@ var rx = /[.+-]/;
  * @return {Object} with properties:
  *  - satisfied {Boolean} true if the versions satisfied the criteria and are considered equal, false if not
  *  - latest {String} the version that is the latest
- *  - cachedWins {Boolean} true if the latest version is the cached version, otherwise false
+ *  - cachedIsLatest {Boolean} true if the latest version is the cached version, otherwise false
  */
 var go = module.exports = function (criteria, given, cached) {
-  if (criteria === 'exact') return { satisfied: semver.eq(given, cached), latest: cached, cachedWins: true };
+  if (criteria === 'exact') return { satisfied: semver.eq(given, cached), latest: cached, cachedIsLatest: true };
 
-  var latest, earliest, satisfied, cachedWins;
+  var latest, earliest, satisfied, cachedIsLatest;
 
   if (semver.gt(given, cached)) {
     latest = semver.clean(given);
     earliest = semver.clean(cached);
-    cachedWins = false;
+    cachedIsLatest = false;
   } else {
     latest = semver.clean(cached);
     earliest = semver.clean(given);
-    cachedWins = true;
+    cachedIsLatest = true;
   }
 
-  if (criteria === 'any') return { satisfied: true, latest: latest, cachedWins: cachedWins };
+  if (criteria === 'any') return { satisfied: true, latest: latest, cachedIsLatest: cachedIsLatest };
 
   var ep = earliest.split(rx);
   var lp = latest.split(rx);
@@ -54,6 +54,6 @@ var go = module.exports = function (criteria, given, cached) {
       throw new Error('Unknown dedupe criteria: ' + criteria);
   }
 
-  return { satisfied: satisfied, latest: latest, cachedWins: cachedWins };
+  return { satisfied: satisfied, latest: latest, cachedIsLatest: cachedIsLatest };
 }
 
