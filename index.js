@@ -21,15 +21,26 @@ exports = module.exports = function (criteria, id, pack) {
   var cached = cache[pack.name];
 
   if (!cached) { 
-    cache[pack.name] = given;
+    cache[pack.name] = [ given ];
     return given;
   }
 
-  var cachedVersion = cached.pack.version;
   var givenVersion = pack.version;
+  var match;
 
-  var info = satisfyCriteria(criteria, givenVersion, cachedVersion);
-  return info.satisfied ? cached : given;
+  var satisfied = cached
+    .some(function (c) {
+      var cachedVersion = c.pack.version;
+      var info = satisfyCriteria(criteria, givenVersion, cachedVersion);
+
+      if (info.satisfied) match = c;
+      return info.satisfied;
+    });
+
+  if (satisfied) return match;
+
+  cached.push(given);
+  return given;
 };
 
 /**

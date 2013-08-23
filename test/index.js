@@ -1,7 +1,10 @@
 'use strict';
 /*jshint asi: true */
 
-var test = require('tap').test
+var debug// =  true;
+var test  =  debug  ? function () {} : require('tap').test
+var test_ =  !debug ? function () {} : require('tap').test
+
 var dedupe = require('../')
 
 var id = '/foo/pack';
@@ -107,5 +110,25 @@ test('\ndifferent name minor (fulfilling criteria)', function (t) {
   var second = dedupe('minor', id, otherpack_2_1_1);
   
   t.notEqual(second.pack.n, first.pack.n, 'returns given one second time')
+  t.end()
+})
+
+test('\nsame name multi cache - second matching third', function (t) {
+  var first = dedupe('minor', id, pack_2_1_1);
+  var second = dedupe('minor', id, pack_1_1_2);
+  var third = dedupe('minor', id, pack_1_1_1_);
+  
+  t.notEqual(second.pack.n, first.pack.n, 'returns given one second time')
+  t.equal(third.pack.n, second.pack.n, 'returns second one third time')
+  t.end()
+})
+
+test('\nsame name multi cache - first matching third', function (t) {
+  var first = dedupe('minor', id, pack_1_1_2);
+  var second = dedupe('minor', id, pack_2_1_1);
+  var third = dedupe('minor', id, pack_1_1_1_);
+  
+  t.notEqual(second.pack.n, first.pack.n, 'returns given one second time')
+  t.equal(third.pack.n, first.pack.n, 'returns second one third time')
   t.end()
 })
