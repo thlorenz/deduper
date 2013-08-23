@@ -1,6 +1,6 @@
 {
   "name": "browser-dedupe",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Dedupes packages with identical names and version numbers match based on a given requirement.",
   "main": "index.js",
   "scripts": {

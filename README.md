@@ -62,6 +62,10 @@ console.log({ orig: orig, match: match, nomatch: nomatch });
 - **major** *major* number has to be equal, *minor* and *patch* numbers may vary
 - **any** versions are not considered
 
+###*reset()*
+
+- resets the package cache
+
 ## License
 
 MIT
