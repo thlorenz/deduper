@@ -4,6 +4,17 @@ var satisfyCriteria = require('./satisfy-criteria');
 
 var cache = {};
 
+/**
+ * Caches packages and returns cached versions if the package name is found in the cache and the versions are considered
+ * compatible considering the given criteria.
+ * 
+ * @name exports
+ * @function
+ * @param criteria {String} one of the following - most to least specific: exact | patch | minor | major | any
+ * @param id {String} identification for the package (i.e. its full path)
+ * @param pack {Object} npm package metadata
+ * @return {Object} with matching id and pack or the one that was given
+ */
 exports = module.exports = function (criteria, id, pack) {
   var given = { id: id, pack: pack };
 
@@ -21,4 +32,10 @@ exports = module.exports = function (criteria, id, pack) {
   return info.satisfied ? cached : given;
 };
 
+/**
+ * Resets the cache
+ * 
+ * @name reset
+ * @function
+ */
 exports.reset = function () { cache = {}; };
