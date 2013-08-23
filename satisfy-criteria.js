@@ -54,6 +54,6 @@ var go = module.exports = function (criteria, given, cached) {
       throw new Error('Unknown dedupe criteria: ' + criteria);
   }
 
-  return { satisfied: satisfied, latest: latest, cachedIsLatest: cachedIsLatest };
+  return { satisfied: satisfied, cachedIsLatest: cachedIsLatest };
 }
 
