@@ -18,7 +18,7 @@ var rx = /[.+-]/;
  *  - cachedIsLatest {Boolean} true if the latest version is the cached version, otherwise false
  */
 var go = module.exports = function (criteria, given, cached) {
-  if (criteria === 'exact') return { satisfied: semver.eq(given, cached), latest: cached, cachedIsLatest: true };
+  if (criteria === 'exact') return { satisfied: semver.eq(given, cached), cachedIsLatest: true };
 
   var latest, earliest, satisfied, cachedIsLatest;
 
@@ -32,7 +32,7 @@ var go = module.exports = function (criteria, given, cached) {
     cachedIsLatest = true;
   }
 
-  if (criteria === 'any') return { satisfied: true, latest: latest, cachedIsLatest: cachedIsLatest };
+  if (criteria === 'any') return { satisfied: true, cachedIsLatest: cachedIsLatest };
 
   var ep = earliest.split(rx);
   var lp = latest.split(rx);

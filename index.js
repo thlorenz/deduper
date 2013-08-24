@@ -29,15 +29,36 @@ exports = module.exports = function (criteria, id, pack) {
   var match;
 
   var satisfied = cached
-    .some(function (c) {
+    .some(function (c, idx) {
       var cachedVersion = c.pack.version;
       var info = satisfyCriteria(criteria, givenVersion, cachedVersion);
 
-      if (info.satisfied) match = c;
+      if (info.satisfied) {
+        match = c;
+        match.idx = idx;
+      }
       return info.satisfied;
     });
 
-  if (satisfied) return match;
+
+  var info;
+  if (satisfied) {
+    info = { pack: match.pack };
+  
+    // when cached version wasn't latest we need to upgrade our cache 
+    // additionally we help whoever is calling us to proceed similarly by adding replace info
+    // TODO: needs tests
+    if (!match.cachedIsLatest) {
+      cached[match.idx] = info;
+      info.replacesId = match.id;
+      info.id = id;
+    } else {
+      // if cached one is latest, we just need to redirect the current resolve to the cached result entirely
+      info.id = match.id;
+    }
+
+    return info;
+  }
 
   cached.push(given);
   return given;
