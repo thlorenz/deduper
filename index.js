@@ -2,8 +2,18 @@
 
 var satisfyCriteria = require('./satisfy-criteria');
 
-// TODO: function needs to return new instance with cache property in order to allow multiple instances with their own cache
-var cache = {};
+/**
+ * Creates new deduper instance with its own cache
+ * 
+ * @name Deduper
+ * @function
+ * @param cache {Object} (optional) provides a cache to use, if not supplied a new cache is created
+ * @return {Deduper} instance
+ */
+function Deduper (cache) {
+  if (!(this instanceof Deduper)) return new Deduper(cache);
+  this.cache = cache || {};
+}
 
 /**
  * Caches packages and returns cached versions if the package name is found in the cache and the versions are considered
@@ -16,7 +26,9 @@ var cache = {};
  * @param pack {Object} npm package metadata
  * @return {Object} with matching id and pack or the one that was given
  */
-exports = module.exports = function (criteria, id, pack) {
+Deduper.prototype.dedupe = function (criteria, id, pack) {
+  var cache = this.cache;
+
   var given = { id: id, pack: pack };
 
   var cached = cache[pack.name];
@@ -71,4 +83,14 @@ exports = module.exports = function (criteria, id, pack) {
  * @name reset
  * @function
  */
-exports.reset = function () { cache = {}; };
+Deduper.prototype.reset = function () { this.cache = {}; };
+
+/**
+ * Creates new deduper instance with its own cache
+ * 
+ * @name Deduper
+ * @function
+ * @param cache {Object} (optional) provides a cache to use, if not supplied a new cache is created
+ * @return {Deduper} instance
+ */
+module.exports = Deduper;

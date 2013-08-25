@@ -1,9 +1,9 @@
-# browser-dedupe [![build status](https://secure.travis-ci.org/thlorenz/browser-dedupe.png)](http://travis-ci.org/thlorenz/browser-dedupe)
+# deduper [![build status](https://secure.travis-ci.org/thlorenz/deduper.png)](http://travis-ci.org/thlorenz/deduper)
 
 Dedupes packages with identical names and version numbers match based on a given requirement.
 
 ```js
-var dedupe = require('browser-dedupe');
+var deduper = require('deduper')();
 
 var orig_id = '/orig/pack';
 var match_id = '/match/pack';
@@ -13,9 +13,9 @@ var pack_1_1_1 = { name: 'pack', version: '1.1.1', n: 1 };
 var pack_1_1_2 = { name: 'pack', version: '1.1.2', n: 2 };
 var pack_1_2_1 = { name: 'pack', version: '1.2.1', n: 3 };
 
-var orig = dedupe('minor', orig_id, pack_1_1_1);
-var match = dedupe('minor', match_id, pack_1_1_2);
-var nomatch = dedupe('minor', nomatch_id, pack_1_2_1);
+var orig = deduper.dedupe('minor', orig_id, pack_1_1_1);
+var match = deduper.dedupe('minor', match_id, pack_1_1_2);
+var nomatch = deduper.dedupe('minor', nomatch_id, pack_1_2_1);
 
 console.log({ orig: orig, match: match, nomatch: nomatch });
 ```
@@ -34,11 +34,24 @@ console.log({ orig: orig, match: match, nomatch: nomatch });
 
 ## Installation
 
-    npm install browser-dedupe
+    npm install deduper
 
 ## API
 
-###*dedupe(criteria, id, pack)*
+###*deduper()*
+
+```
+/**
+ * Creates new deduper instance with its own cache
+ * 
+ * @name Deduper
+ * @function
+ * @param cache {Object} (optional) provides a cache to use, if not supplied a new cache is created
+ * @return {Deduper} instance
+ */
+```
+
+###*deduper.dedupe(criteria, id, pack)*
 
 ```
 /**
@@ -62,7 +75,7 @@ console.log({ orig: orig, match: match, nomatch: nomatch });
 - **major** *major* number has to be equal, *minor* and *patch* numbers may vary
 - **any** versions are not considered
 
-###*reset()*
+###*deduper.reset()*
 
 - resets the package cache
 

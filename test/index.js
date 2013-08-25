@@ -5,7 +5,8 @@ var debug// =  true;
 var test  =  debug  ? function () {} : require('tap').test
 var test_ =  !debug ? function () {} : require('tap').test
 
-var dedupe = require('../')
+var deduper = require('../')();
+var dedupe = deduper.dedupe.bind(deduper);
 
 var id = '/foo/pack';
 var pack_1_1_1 = { name: 'pack', version: '1.1.1', n: 1 };
@@ -17,7 +18,7 @@ var pack_2_1_1 = { name: 'pack', version: '2.1.1', n: 5 };
 var otherpack_2_1_1 = { name: 'otherpack', version: '2.1.1', n: 6 };
 
 test('\nsame name exact - matching', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('exact', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('exact', id + pack_1_1_1_.version + ':' + pack_1_1_1_.n, pack_1_1_1_);
   
@@ -26,7 +27,7 @@ test('\nsame name exact - matching', function (t) {
 })
 
 test('\nsame name exact - not matching', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('exact', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('exact', id + pack_1_1_2.version + ':' + pack_1_1_2.n, pack_1_1_2);
   
@@ -35,9 +36,9 @@ test('\nsame name exact - not matching', function (t) {
 })
 
 test('\nsame name exact - matching with intermittent reset', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('exact', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
-  dedupe.reset()
+  deduper.reset()
   var second = dedupe('exact', id + pack_1_1_1_.version + ':' + pack_1_1_1_.n, pack_1_1_1_);
   
   t.notEqual(second.id, first.id, 'returns given one second time')
@@ -45,7 +46,7 @@ test('\nsame name exact - matching with intermittent reset', function (t) {
 })
 
 test('\nsame name patch - matching cached is latest', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('patch', id + pack_1_1_1_.version + ':' + pack_1_1_1_.n, pack_1_1_1_);
   var second = dedupe('patch', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
 
@@ -54,7 +55,7 @@ test('\nsame name patch - matching cached is latest', function (t) {
 })
 
 test('\nsame name patch - matching cached is not latest', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('patch', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('patch', id + pack_1_1_1_.version + ':' + pack_1_1_1_.n, pack_1_1_1_);
   
@@ -63,7 +64,7 @@ test('\nsame name patch - matching cached is not latest', function (t) {
 })
 
 test('\nsame name patch - not matching', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('patch', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('patch', id + pack_1_1_2.version + ':' + pack_1_1_2.n, pack_1_1_2);
   
@@ -72,7 +73,7 @@ test('\nsame name patch - not matching', function (t) {
 })
 
 test('\nsame name minor - matching, cached not latest', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('minor', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('minor', id + pack_1_1_2.version + ':' + pack_1_1_2.n, pack_1_1_2);
   
@@ -82,7 +83,7 @@ test('\nsame name minor - matching, cached not latest', function (t) {
 })
 
 test('\nsame name minor - matching, cached latest', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('minor', id + pack_1_1_2.version + ':' + pack_1_1_2.n, pack_1_1_2);
   var second = dedupe('minor', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   
@@ -91,7 +92,7 @@ test('\nsame name minor - matching, cached latest', function (t) {
 })
 
 test('\nsame name minor - not matching', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('minor', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('minor', id + pack_1_2_1.version + ':' + pack_1_2_1.n, pack_1_2_1);
   
@@ -100,7 +101,7 @@ test('\nsame name minor - not matching', function (t) {
 })
 
 test('\nsame name major - matching', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('major', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('major', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   
@@ -109,7 +110,7 @@ test('\nsame name major - matching', function (t) {
 })
 
 test('\nsame name major - not matching', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('major', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('major', id + pack_2_1_1.version + ':' + pack_2_1_1.n, pack_2_1_1);
   
@@ -118,7 +119,7 @@ test('\nsame name major - not matching', function (t) {
 })
 
 test('\nsame name any - matching cached not latest', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('any', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('any', id + pack_2_1_1.version + ':' + pack_2_1_1.n, pack_2_1_1);
   
@@ -128,7 +129,7 @@ test('\nsame name any - matching cached not latest', function (t) {
 })
 
 test('\nsame name any - matching cached latest', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('any', id + pack_2_1_1.version + ':' + pack_2_1_1.n, pack_2_1_1);
   var second = dedupe('any', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   
@@ -137,7 +138,7 @@ test('\nsame name any - matching cached latest', function (t) {
 })
 
 test('\ndifferent name any', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('any', id + pack_1_1_1.version + ':' + pack_1_1_1.n, pack_1_1_1);
   var second = dedupe('any', id + otherpack_2_1_1.version + ':' + otherpack_2_1_1.n, otherpack_2_1_1);
   
@@ -146,7 +147,7 @@ test('\ndifferent name any', function (t) {
 })
 
 test('\ndifferent name minor (fulfilling criteria)', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('minor', id + pack_2_1_1.version + ':' + pack_2_1_1.n, pack_2_1_1);
   var second = dedupe('minor', id + otherpack_2_1_1.version + ':' + otherpack_2_1_1.n, otherpack_2_1_1);
   
@@ -155,7 +156,7 @@ test('\ndifferent name minor (fulfilling criteria)', function (t) {
 })
 
 test('\nsame name multi cache - first matching third', function (t) {
-  dedupe.reset()
+  deduper.reset()
   var first = dedupe('minor', id + pack_1_1_2.version + ':' + pack_1_1_2.n, pack_1_1_2);
   var second = dedupe('minor', id + pack_2_1_1.version + ':' + pack_2_1_1.n, pack_2_1_1);
   var third = dedupe('minor', id + pack_1_1_1_.version + ':' + pack_1_1_1_.n, pack_1_1_1_);
