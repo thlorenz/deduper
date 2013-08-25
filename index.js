@@ -2,6 +2,7 @@
 
 var satisfyCriteria = require('./satisfy-criteria');
 
+// TODO: function needs to return new instance with cache property in order to allow multiple instances with their own cache
 var cache = {};
 
 /**
@@ -35,6 +36,7 @@ exports = module.exports = function (criteria, id, pack) {
 
       if (info.satisfied) {
         match = c;
+        match.cachedIsLatest = info.cachedIsLatest;
         match.idx = idx;
       }
       return info.satisfied;
@@ -43,18 +45,17 @@ exports = module.exports = function (criteria, id, pack) {
 
   var info;
   if (satisfied) {
-    info = { pack: match.pack };
-  
+
     // when cached version wasn't latest we need to upgrade our cache 
     // additionally we help whoever is calling us to proceed similarly by adding replace info
-    // TODO: needs tests
     if (!match.cachedIsLatest) {
-      cached[match.idx] = info;
+      info = { id: given.id, pack: given.pack };
       info.replacesId = match.id;
-      info.id = id;
+
+      cached[match.idx] = given;
     } else {
       // if cached one is latest, we just need to redirect the current resolve to the cached result entirely
-      info.id = match.id;
+      info = { id: match.id, pack: match.pack };
     }
 
     return info;
