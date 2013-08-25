@@ -38,7 +38,7 @@ console.log({ orig: orig, match: match, nomatch: nomatch });
 
 ## API
 
-###*deduper()*
+###*deduper([cache])*
 
 ```
 /**

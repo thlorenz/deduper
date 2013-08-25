@@ -1,6 +1,6 @@
 {
   "name": "deduper",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Dedupes packages with identical names and version numbers match based on a given requirement.",
   "main": "index.js",
   "scripts": {
